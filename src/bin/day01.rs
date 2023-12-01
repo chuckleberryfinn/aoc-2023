@@ -2,7 +2,7 @@ use std::collections::HashMap;
 
 use regex::Regex;
 
-fn get_inputs(regex: &str) -> Vec<Vec<u32>> {
+fn calibration(regex: &str) -> u32 {
     let re = Regex::new(regex).unwrap();
     let numbers: HashMap<&str, u32> = [
         "one", "two", "three", "four", "five", "six", "seven", "eight", "nine",
@@ -21,14 +21,8 @@ fn get_inputs(regex: &str) -> Vec<Vec<u32>> {
                     Some(x) => *x,
                     None => m.as_str().parse().unwrap(),
                 })
-                .collect()
+                .collect::<Vec<u32>>()
         })
-        .collect()
-}
-
-fn calibration(regex: &str) -> u32 {
-    get_inputs(regex)
-        .iter()
         .fold(0, |acc, v| acc + v[0] * 10 + v[v.len() - 1])
 }
 

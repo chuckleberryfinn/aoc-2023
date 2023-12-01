@@ -4,20 +4,13 @@ use regex::Regex;
 
 fn get_inputs(regex: &str) -> Vec<Vec<u32>> {
     let re = Regex::new(regex).unwrap();
-    let digits = ["1", "2", "3", "4", "5", "6", "7", "8", "9"];
     let words = [
         "one", "two", "three", "four", "five", "six", "seven", "eight", "nine",
     ];
-    let numbers: HashMap<&str, u32> = digits
+    let numbers: HashMap<&str, u32> = words
         .iter()
         .zip(1..=9)
         .map(|(&word, number)| (word, number))
-        .chain(
-            words
-                .iter()
-                .zip(1..=9)
-                .map(|(&word, number)| (word, number)),
-        )
         .collect();
 
     include_str!("../../input/day01.txt")
@@ -25,7 +18,10 @@ fn get_inputs(regex: &str) -> Vec<Vec<u32>> {
         .map(|s| {
             s.char_indices()
                 .filter_map(|(i, _)| re.find(&s[i..]))
-                .map(|m| *numbers.get(m.as_str()).unwrap())
+                .map(|m| match numbers.get(m.as_str()) {
+                    Some(x) => *x,
+                    None => m.as_str().parse().unwrap(),
+                })
                 .collect()
         })
         .collect()
@@ -34,8 +30,7 @@ fn get_inputs(regex: &str) -> Vec<Vec<u32>> {
 fn calibration(regex: &str) -> u32 {
     get_inputs(regex)
         .iter()
-        .map(|v| (v.first().unwrap() * 10) + v.last().unwrap())
-        .sum()
+        .fold(0, |acc, v| acc + v[0] * 10 + v[v.len() - 1])
 }
 
 fn part1() -> u32 {

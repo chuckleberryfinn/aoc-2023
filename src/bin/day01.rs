@@ -4,20 +4,19 @@ use regex::Regex;
 
 fn get_inputs(regex: &str) -> Vec<Vec<u32>> {
     let re = Regex::new(regex).unwrap();
-    let words = [
+    let numbers: HashMap<&str, u32> = [
         "one", "two", "three", "four", "five", "six", "seven", "eight", "nine",
-    ];
-    let numbers: HashMap<&str, u32> = words
-        .iter()
-        .zip(1..=9)
-        .map(|(&word, number)| (word, number))
-        .collect();
+    ]
+    .iter()
+    .zip(1..=9)
+    .map(|(&word, number)| (word, number))
+    .collect();
 
     include_str!("../../input/day01.txt")
         .lines()
         .map(|s| {
-            s.char_indices()
-                .filter_map(|(i, _)| re.find(&s[i..]))
+            (0..s.len())
+                .filter_map(|i| re.find(&s[i..]))
                 .map(|m| match numbers.get(m.as_str()) {
                     Some(x) => *x,
                     None => m.as_str().parse().unwrap(),

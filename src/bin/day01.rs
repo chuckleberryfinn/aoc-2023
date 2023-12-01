@@ -2,15 +2,17 @@ use std::collections::HashMap;
 
 use regex::Regex;
 
+static DIGITS: [&str; 9] = [
+    "one", "two", "three", "four", "five", "six", "seven", "eight", "nine",
+];
+
 fn calibration(regex: &str) -> u32 {
     let re = Regex::new(regex).unwrap();
-    let numbers: HashMap<&str, u32> = [
-        "one", "two", "three", "four", "five", "six", "seven", "eight", "nine",
-    ]
-    .iter()
-    .zip(1..=9)
-    .map(|(&word, number)| (word, number))
-    .collect();
+    let numbers: HashMap<&str, u32> = DIGITS
+        .iter()
+        .zip(1..=9)
+        .map(|(&word, number)| (word, number))
+        .collect();
 
     include_str!("../../input/day01.txt")
         .lines()
@@ -31,7 +33,7 @@ fn part1() -> u32 {
 }
 
 fn part2() -> u32 {
-    calibration(r"one|two|three|four|five|six|seven|eight|nine|ten|\d")
+    calibration(&(DIGITS.join("|") + r"|\d"))
 }
 
 fn main() {

@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-fn get_input() -> Vec<Vec<Vec<(i32, &'static str)>>> {
+fn get_input() -> Vec<Vec<Vec<(&'static str, i32)>>> {
     include_str!("../../input/day02.txt")
         .lines()
         .map(|s| {
@@ -10,8 +10,8 @@ fn get_input() -> Vec<Vec<Vec<(i32, &'static str)>>> {
                 .split("; ")
                 .map(|game| {
                     game.split(", ")
-                        .map(|balls| balls.split_once(' ').unwrap())
-                        .map(|ball| (ball.0.parse().unwrap(), ball.1))
+                        .map(|draw| draw.split_once(' ').unwrap())
+                        .map(|(count, colour)| (colour, count.parse().unwrap()))
                         .collect()
                 })
                 .collect()
@@ -27,7 +27,7 @@ fn part1() -> u32 {
                 draw.iter()
                     .fold(
                         HashMap::from([("red", 12), ("green", 13), ("blue", 14)]),
-                        |mut colours, &(count, colour)| {
+                        |mut colours, &(colour, count)| {
                             let current: i32 = colours.get(colour).unwrap() - count;
                             colours.insert(colour, current);
                             colours
@@ -41,24 +41,21 @@ fn part1() -> u32 {
 }
 
 fn part2() -> i32 {
-    get_input().iter().fold(0, |acc, game| {
-        acc + game
-            .iter()
-            .fold(
+    get_input()
+        .iter()
+        .map(|game| {
+            game.iter().fold(
                 HashMap::from([("red", 0), ("green", 0), ("blue", 0)]),
                 |mut colours, draw| {
-                    draw.iter().all(|(count, colour)| {
+                    draw.iter().for_each(|(colour, count)| {
                         colours
                             .insert(colour, std::cmp::max(*colours.get(colour).unwrap(), *count));
-                        true
                     });
                     colours
                 },
             )
-            .values()
-            .copied()
-            .product::<i32>()
-    })
+        })
+        .fold(0, |acc, colours| acc + colours.values().product::<i32>())
 }
 
 fn main() {

@@ -10,6 +10,24 @@ fn get_input() -> Vec<Vec<&'static str>> {
         .collect()
 }
 
+fn part1() -> u32 {
+    let inputs = get_input();
+    let races = (0..inputs[0].len())
+        .map(|i| (inputs[0][i].parse().unwrap(), inputs[1][i].parse().unwrap()))
+        .collect::<Vec<(i64, i64)>>();
+
+    calculate_race(&races)
+}
+
+fn part2() -> u32 {
+    let races = get_input()
+        .iter()
+        .map(|num| num.iter().map(|n| n.to_string()).collect::<String>())
+        .collect::<Vec<String>>();
+
+    calculate_race(&[(races[0].parse().unwrap(), races[1].parse().unwrap())])
+}
+
 fn calculate_race(races: &[(i64, i64)]) -> u32 {
     races
         .iter()
@@ -27,23 +45,6 @@ fn calculate_race(races: &[(i64, i64)]) -> u32 {
                 .into_inner()
         })
         .product()
-}
-
-fn part1() -> u32 {
-    let inputs = get_input();
-    let races = (0..inputs[0].len())
-        .map(|i| (inputs[0][i].parse().unwrap(), inputs[1][i].parse().unwrap()))
-        .collect::<Vec<(i64, i64)>>();
-    calculate_race(&races)
-}
-
-fn part2() -> u32 {
-    let races = get_input()
-        .iter()
-        .map(|num| num.iter().map(|n| n.to_string()).collect::<String>())
-        .collect::<Vec<String>>();
-
-    calculate_race(&[(races[0].parse().unwrap(), races[1].parse().unwrap())])
 }
 
 fn main() {

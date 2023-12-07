@@ -20,18 +20,11 @@ fn card_ordering(card: char, jokers_wild: bool) -> usize {
         'K' => 13,
         'Q' => 12,
         'J' => match jokers_wild {
-            false => 11,
             true => 1,
+            false => 11,
         },
         'T' => 10,
-        '9' => 9,
-        '8' => 8,
-        '7' => 7,
-        '6' => 6,
-        '5' => 5,
-        '4' => 4,
-        '3' => 3,
-        '2' => 2,
+        '2'..='9' => card.to_digit(10).unwrap() as usize,
         _ => panic!("Unexpected card"),
     }
 }
@@ -60,10 +53,10 @@ fn get_winnings(jokers_wild: bool) -> u32 {
 fn get_input() -> Vec<(&'static str, u32)> {
     include_str!("../../input/day07.txt")
         .lines()
-        .map(|l| l.split_once(' ').unwrap())
-        .collect::<Vec<(&'static str, &'static str)>>()
-        .iter()
-        .map(|(hand, score)| (*hand, score.parse().unwrap()))
+        .map(|l| {
+            let splits = l.split_once(' ').unwrap();
+            (splits.0, splits.1.parse().unwrap())
+        })
         .collect::<Vec<(&'static str, u32)>>()
 }
 

@@ -24,8 +24,8 @@ fn get_input() -> Vec<(&'static str, u32)> {
         .collect::<Vec<(&'static str, u32)>>()
 }
 
-fn card_ordering(c: char, jokers_wild: bool) -> usize {
-    match c {
+fn card_ordering(card: char, jokers_wild: bool) -> usize {
+    match card {
         'A' => 14,
         'K' => 13,
         'Q' => 12,
@@ -42,7 +42,7 @@ fn card_ordering(c: char, jokers_wild: bool) -> usize {
         '4' => 4,
         '3' => 3,
         '2' => 2,
-        _ => 1,
+        _ => panic!("Unexpected card"),
     }
 }
 
@@ -55,7 +55,7 @@ fn compare_cards(hand1: &'static str, hand2: &'static str, jokers_wild: bool) ->
             let order_h2 = card_ordering(h2, jokers_wild);
             match order_h1.cmp(&order_h2) {
                 Ordering::Equal => None,
-                _ => Some(order_h1.cmp(&order_h2)),
+                order => Some(order),
             }
         })
         .unwrap_or(Ordering::Equal)
@@ -65,11 +65,10 @@ fn compare_hand(hand1: &'static str, hand2: &'static str, jokers_wild: bool) -> 
     let rank1 = evaluate_hand(hand1, jokers_wild);
     let rank2 = evaluate_hand(hand2, jokers_wild);
 
-    if rank1 != rank2 {
-        return rank1.cmp(&rank2);
+    match rank1.cmp(&rank2) {
+        Ordering::Equal => compare_cards(hand1, hand2, jokers_wild),
+        order => order,
     }
-
-    compare_cards(hand1, hand2, jokers_wild)
 }
 
 fn evaluate_hand(hand: &str, jokers_wild: bool) -> CamelHand {
@@ -86,9 +85,8 @@ fn evaluate_hand(hand: &str, jokers_wild: bool) -> CamelHand {
             .sorted_by(|a, b| b.1.cmp(a.1))
             .map(|(k, _)| *k)
             .collect::<Vec<char>>();
-        let jokers = *cards.get(&'J').unwrap_or(&0);
         if sorted[0] != 'J' {
-            *cards.entry(sorted[0]).or_default() += jokers;
+            *cards.entry(sorted[0]).or_default() += *cards.get(&'J').unwrap_or(&0);
             cards.remove(&'J');
         } else if sorted.len() > 1 {
             *cards.entry('J').or_default() += *cards.get(&sorted[1]).unwrap();
@@ -114,8 +112,7 @@ fn evaluate_hand(hand: &str, jokers_wild: bool) -> CamelHand {
             _ => CamelHand::ThreeOfAKind,
         },
         4 => CamelHand::OnePair,
-        5 => CamelHand::HighCard,
-        _ => panic!("At the disco"),
+        _ => CamelHand::HighCard,
     }
 }
 

@@ -119,7 +119,7 @@ fn evaluate_hand(hand: &str, jokers_wild: bool) -> CamelHand {
     }
 }
 
-fn sort_hands(jokers_wild: bool) -> u32 {
+fn get_winnings(jokers_wild: bool) -> u32 {
     get_input()
         .iter()
         .sorted_by(|a, b| compare_hand(a.0, b.0, jokers_wild))
@@ -128,11 +128,11 @@ fn sort_hands(jokers_wild: bool) -> u32 {
 }
 
 fn part1() -> u32 {
-    sort_hands(false)
+    get_winnings(false)
 }
 
 fn part2() -> u32 {
-    sort_hands(true)
+    get_winnings(true)
 }
 
 fn main() {

@@ -16,8 +16,9 @@ fn part2() -> usize {
         .filter(|k| k.ends_with('A'))
         .map(|c| count(c, instructions, &maps, "Z"))
         .collect::<Vec<usize>>()
-        .iter()
-        .fold(1, |acc, x| lcm(acc, *x))
+        .into_iter()
+        .reduce(lcm)
+        .unwrap()
 }
 
 fn get_input() -> (
